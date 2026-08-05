@@ -1,0 +1,9 @@
+[user]
+	name = Jinnie Kim
+	email = jinhgkim@gmail.com
+
+[init]
+	defaultBranch = main
+
+[alias]
+	cs = commit -s
