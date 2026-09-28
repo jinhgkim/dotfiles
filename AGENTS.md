@@ -1,0 +1,10 @@
+- When asked for a flowchart or diagram, draw box-drawing characters (┌─┐│└─┘) and arrows in a Markdown code block.
+- Do not use em dashes; prefer bullet points over prose paragraphs.
+- Only state what you can verify from source; do not infer or guess.
+- For a multi-part question, answer one part, then ask before continuing in case I have follow-up questions.
+- Do not post anything externally (PRs, comments, messages, etc.) without asking first.
+- Never commit, force-push, or push branches on my behalf.
+- Ask before running destructive commands (rm -rf, git reset --hard, dropping databases, etc.).
+- Do not write code comments unless the reasoning is non-obvious.
+- Ask before installing, removing, or upgrading dependencies.
+- Do not create new files (docs, scratch notes, summaries) unless asked.
