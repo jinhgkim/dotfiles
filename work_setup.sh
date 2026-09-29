@@ -18,8 +18,13 @@ copy() {
 copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 copy "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 copy "$DOTFILES/vimrc" "$HOME/.vimrc"
-copy "$DOTFILES/bashrc" "$HOME/.bashrc"
+copy "$DOTFILES/bashrc" "$HOME/.bashrc.personal"
 copy "$DOTFILES/gitconfig" "$HOME/.gitconfig"
+
+# Load personal bashrc from the end of ~/.bashrc, keeping any work-provided config.
+SOURCE_LINE='[[ -f ~/.bashrc.personal ]] && source ~/.bashrc.personal'
+grep -Fqx "$SOURCE_LINE" "$HOME/.bashrc" 2>/dev/null ||
+  { printf '\n%s\n' "$SOURCE_LINE" >> "$HOME/.bashrc"; echo "added   source line to $HOME/.bashrc"; }
 
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
