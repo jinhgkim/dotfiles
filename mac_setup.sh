@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-trap 'echo "install.sh failed at line $LINENO" >&2' ERR
+trap 'echo "mac_setup.sh failed at line $LINENO" >&2' ERR
 
 # 1. Homebrew: skip if already installed.
 if command -v brew &>/dev/null; then
@@ -39,8 +39,8 @@ link() {
   echo "linked  $dest -> $src"
 }
 
-link "$DOTFILES/agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
-link "$DOTFILES/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+link "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+link "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link "$DOTFILES/gitconfig" "$HOME/.gitconfig"
 link "$DOTFILES/vimrc" "$HOME/.vimrc"
 link "$DOTFILES/zshrc" "$HOME/.zshrc"
