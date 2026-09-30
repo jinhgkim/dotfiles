@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 trap 'echo "work_setup.sh failed at line $LINENO" >&2' ERR
@@ -38,13 +38,20 @@ find_missing() {
   command -v bat &>/dev/null || command -v batcat &>/dev/null || missing+=("bat")
 }
 
+pm=""
+if command -v apt-get &>/dev/null; then
+  pm=apt-get
+elif command -v dnf &>/dev/null; then
+  pm=dnf
+fi
+
 find_missing
-if (( ${#missing[@]} )) && [[ -t 0 ]] && command -v apt-get &>/dev/null && command -v sudo &>/dev/null; then
-  read -rp "Install ${missing[*]} with sudo apt? [y/N] " answer
+if (( ${#missing[@]} )) && [[ -t 0 ]] && [[ -n "$pm" ]] && command -v sudo &>/dev/null; then
+  read -rp "Install ${missing[*]} with sudo $pm? [y/N] " answer || answer=""
   if [[ "$answer" == [yY] ]]; then
-    if sudo apt-get update; then
+    if [[ "$pm" != apt-get ]] || sudo apt-get update; then
       for pkg in "${missing[@]}"; do
-        sudo apt-get install -y "$pkg" || echo "apt could not install $pkg" >&2
+        sudo "$pm" install -y "$pkg" || echo "$pm could not install $pkg" >&2
       done
     fi
     find_missing
