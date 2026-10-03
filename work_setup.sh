@@ -19,12 +19,25 @@ copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 copy "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 copy "$DOTFILES/vimrc" "$HOME/.vimrc"
 copy "$DOTFILES/bashrc" "$HOME/.bashrc.personal"
-copy "$DOTFILES/gitconfig" "$HOME/.gitconfig"
 
 # Load personal bashrc from the end of ~/.bashrc, keeping any work-provided config.
 SOURCE_LINE='[[ -f ~/.bashrc.personal ]] && source ~/.bashrc.personal'
 grep -Fqx "$SOURCE_LINE" "$HOME/.bashrc" 2>/dev/null ||
   { printf '\n%s\n' "$SOURCE_LINE" >> "$HOME/.bashrc"; echo "added   source line to $HOME/.bashrc"; }
+
+# No ~/.gitconfig: use the personal one as is. Work-provided ~/.gitconfig: include
+# the personal one from it, keeping the work name and email.
+if [[ ! -e "$HOME/.gitconfig" ]] || cmp -s "$DOTFILES/gitconfig" "$HOME/.gitconfig"; then
+  copy "$DOTFILES/gitconfig" "$HOME/.gitconfig"
+else
+  copy "$DOTFILES/gitconfig" "$HOME/.gitconfig.personal"
+  for key in user.name user.email; do
+    git config --file "$HOME/.gitconfig.personal" --unset "$key" || true
+  done
+  INCLUDE_PATH='~/.gitconfig.personal'
+  git config --global --get-all include.path 2>/dev/null | grep -Fqx "$INCLUDE_PATH" ||
+    { git config --global --add include.path "$INCLUDE_PATH"; echo "added   include to $HOME/.gitconfig"; }
+fi
 
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
