@@ -17,3 +17,4 @@ brew "starship"
 # Install from app store
 brew "mas"
 mas "KakaoTalk", id: 869223134
+mas "Xcode", id: 497799835
