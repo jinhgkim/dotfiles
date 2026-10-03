@@ -20,6 +20,9 @@ alias proj='cd $HOME/projects'
 export EDITOR=vim
 export VISUAL=vim
 
+export LLVM_ROOT=/opt/homebrew/opt/llvm
+
+
 # dedupe history, share it live across terminals
 setopt HIST_IGNORE_DUPS SHARE_HISTORY INC_APPEND_HISTORY
 
