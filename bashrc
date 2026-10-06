@@ -17,7 +17,7 @@ elif command -v batcat &>/dev/null; then
   alias cat='batcat --paging=never'
 fi
 
-alias bashrc='vim ~/.bashrc'
+alias bashh='vim ~/.bashrc'
 alias reload='source ~/.bashrc'
 alias proj='cd $HOME/projects'
 

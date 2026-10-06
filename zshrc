@@ -12,7 +12,7 @@ fi
 
 command -v bat &>/dev/null && alias cat='bat --paging=never'
 
-alias bashrc='vim ~/.zshrc'
+alias bashh='vim ~/.zshrc'
 alias reload='source ~/.zshrc'
 alias proj='cd $HOME/projects'
 
