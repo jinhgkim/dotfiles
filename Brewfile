@@ -6,6 +6,7 @@ cask "google-chrome"
 cask "visual-studio-code"
 cask "adobe-acrobat-pro"
 cask "discord"
+cask "obsidian"
 
 # CLI tools
 brew "ripgrep"

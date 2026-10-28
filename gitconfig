@@ -7,8 +7,20 @@
 
 [alias]
 	so = commit -s
-	fp = push --force-with-lease
-	ri = "!f() { git rebase -i HEAD~${1:-1}; }; f"
+	amd = commit --amend
+	
+	nb = checkout -b
 
+	wt = worktree add
+	wtl = worktree list
+	wtrm = worktree remove
+		
+	ri = "!f() { git rebase -i HEAD~${1:-1}; }; f"
+	soft = "!f() { git reset --soft HEAD~${1:-1}; }; f"
+	fp = push --force-with-lease
+	
+	fa = fetch --all
+	rb = rebase upstream/main
+	
 [push]
 	autoSetupRemote = true
