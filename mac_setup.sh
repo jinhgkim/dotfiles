@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Safe to re-run: every step skips what's already done.
+# Backups (*.bak) keep only the most recent copy; a re-run overwrites the previous one.
+
 set -Eeuo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -43,7 +47,7 @@ link "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 link "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link "$DOTFILES/gitconfig" "$HOME/.gitconfig"
 link "$DOTFILES/vimrc" "$HOME/.vimrc"
-link "$DOTFILES/zshrc" "$HOME/.zshrc"
+link "$DOTFILES/shellrc" "$HOME/.zshrc"
 
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.zshrc.local" ]] || touch "$HOME/.zshrc.local"

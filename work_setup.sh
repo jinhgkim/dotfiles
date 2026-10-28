@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Safe to re-run, but existing copies are never overwritten.
+# To pick up updates, delete ~/.*.personal (bashrc, gitconfig) and re-run.
+
 set -Eeuo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,7 +22,7 @@ copy() {
 copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 copy "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 copy "$DOTFILES/vimrc" "$HOME/.vimrc"
-copy "$DOTFILES/bashrc" "$HOME/.bashrc.personal"
+copy "$DOTFILES/shellrc" "$HOME/.bashrc.personal"
 
 # Load personal bashrc from the end of ~/.bashrc, keeping any work-provided config.
 SOURCE_LINE='[[ -f ~/.bashrc.personal ]] && source ~/.bashrc.personal'
@@ -42,7 +46,7 @@ fi
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
 
-# Optional CLI tools: bashrc falls back to plain ls/cat/pager without them.
+# Optional CLI tools: shellrc falls back to plain ls/cat/pager without them.
 find_missing() {
   missing=()
   for pair in rg:ripgrep eza:eza delta:git-delta starship:starship; do
