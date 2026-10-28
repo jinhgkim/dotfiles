@@ -21,6 +21,35 @@
 	
 	fa = fetch --all
 	rb = rebase upstream/main
+
+	# delete local branches whose remote branch is gone (asks first)
+	rmgone = "!f() { \
+		git fetch --prune; \
+		b=$(git for-each-ref \
+		--format='%(refname:short) %(upstream:track)' refs/heads \
+		| awk '$2 == \"[gone]\" {print $1}'); \
+		[ -z \"$b\" ] && { echo 'No gone branches.'; return; }; \
+		echo \"$b\"; \
+		printf 'Delete these branches? [Y/n] '; read a; \
+		case \"$a\" in \
+		[nN]*) echo 'Cancelled.' ;; \
+		*) echo \"$b\" | xargs git branch -D ;; \
+		esac; \
+	}; f"
+	
+	# delete local branches that have no remote branch, except main (asks first)
+	rmlocal = "!f() { \
+		b=$(git for-each-ref \
+		--format='%(refname:short) %(upstream)' refs/heads \
+		| awk '$2 == \"\" && $1 != \"main\" {print $1}'); \
+		[ -z \"$b\" ] && { echo 'No local-only branches.'; return; }; \
+		echo \"$b\"; \
+		printf 'Delete these branches? [Y/n] '; read a; \
+		case \"$a\" in \
+		[nN]*) echo 'Cancelled.' ;; \
+		*) echo \"$b\" | xargs git branch -D ;; \
+		esac; \
+	}; f"
 	
 [push]
 	autoSetupRemote = true
