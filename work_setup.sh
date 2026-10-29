@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# Safe to re-run, but existing copies are never overwritten.
-# To pick up updates, delete ~/.*.personal (bashrc, gitconfig) and re-run.
+# Safe to re-run: copies are overwritten with the latest dotfiles versions.
 
 set -Eeuo pipefail
 
@@ -11,12 +10,15 @@ trap 'echo "work_setup.sh failed at line $LINENO" >&2' ERR
 copy() {
   local src="$1" dest="$2"
   mkdir -p "$(dirname "$dest")"
-  if [[ -e "$dest" ]]; then
-    echo "skip    $dest (already exists)"
-    return
+  if [[ ! -e "$dest" ]]; then
+    cp "$src" "$dest"
+    echo "copied  $dest"
+  elif cmp -s "$src" "$dest"; then
+    echo "skip    $dest (up to date)"
+  else
+    cp "$src" "$dest"
+    echo "updated $dest"
   fi
-  cp "$src" "$dest"
-  echo "copied  $dest"
 }
 
 copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
@@ -29,19 +31,15 @@ SOURCE_LINE='[[ -f ~/.bashrc.personal ]] && source ~/.bashrc.personal'
 grep -Fqx "$SOURCE_LINE" "$HOME/.bashrc" 2>/dev/null ||
   { printf '\n%s\n' "$SOURCE_LINE" >> "$HOME/.bashrc"; echo "added   source line to $HOME/.bashrc"; }
 
-# No ~/.gitconfig: use the personal one as is. Work-provided ~/.gitconfig: include
-# the personal one from it, keeping the work name and email.
-if [[ ! -e "$HOME/.gitconfig" ]] || cmp -s "$DOTFILES/gitconfig" "$HOME/.gitconfig"; then
-  copy "$DOTFILES/gitconfig" "$HOME/.gitconfig"
-else
-  copy "$DOTFILES/gitconfig" "$HOME/.gitconfig.personal"
-  for key in user.name user.email; do
-    git config --file "$HOME/.gitconfig.personal" --unset "$key" || true
-  done
-  INCLUDE_PATH='~/.gitconfig.personal'
-  git config --global --get-all include.path 2>/dev/null | grep -Fqx "$INCLUDE_PATH" ||
-    { git config --global --add include.path "$INCLUDE_PATH"; echo "added   include to $HOME/.gitconfig"; }
-fi
+# This assumes there's always a work-provided ~/.gitconfig and includes the .personal
+# one from it, keeping the work name and email.
+copy "$DOTFILES/gitconfig" "$HOME/.gitconfig.personal"
+for key in user.name user.email; do
+  git config --file "$HOME/.gitconfig.personal" --unset "$key" || true
+done
+INCLUDE_PATH='~/.gitconfig.personal'
+git config --global --get-all include.path 2>/dev/null | grep -Fqx "$INCLUDE_PATH" ||
+  { git config --global --add include.path "$INCLUDE_PATH"; echo "added   include to $HOME/.gitconfig"; }
 
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
