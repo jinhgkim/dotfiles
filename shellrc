@@ -72,3 +72,6 @@ command -v starship &>/dev/null && eval "$(starship init $_shell)"
 [[ -f ~/.${_shell}rc.local ]] && source ~/.${_shell}rc.local
 
 unset _shell _rc _gitcfg
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+

@@ -21,10 +21,27 @@ copy() {
   fi
 }
 
+copy_dir() {
+  local src="$1" dest="$2"
+  if [[ -d "$dest" ]] && diff -rq "$src" "$dest" &>/dev/null; then
+    echo "skip    $dest (up to date)"
+    return
+  fi
+  if [[ -e "$dest" ]]; then
+    rm -rf "$dest.bak"
+    mv "$dest" "$dest.bak"
+    echo "backed up $dest -> $dest.bak"
+  fi
+  mkdir -p "$(dirname "$dest")"
+  cp -R "$src" "$dest"
+  echo "copied  $dest"
+}
+
 copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 copy "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 copy "$DOTFILES/vimrc" "$HOME/.vimrc"
-copy "$DOTFILES/shellrc" "$HOME/.bashrc.personal"
+copy_dir "$DOTFILES/nvim" "$HOME/.config/nvim"
+copy "$DOTFILES/bashrc" "$HOME/.bashrc.personal"
 
 # Load personal bashrc from the end of ~/.bashrc, keeping any work-provided config.
 SOURCE_LINE='[[ -f ~/.bashrc.personal ]] && source ~/.bashrc.personal'
@@ -44,13 +61,16 @@ git config --global --get-all include.path 2>/dev/null | grep -Fqx "$INCLUDE_PAT
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
 
-# Optional CLI tools: shellrc falls back to plain ls/cat/pager without them.
+# Optional CLI tools: bashrc falls back to plain ls/cat/pager without them.
+# nvim (kickstart) needs rg, fd and tree-sitter.
 find_missing() {
   missing=()
-  for pair in rg:ripgrep eza:eza delta:git-delta starship:starship; do
+  for pair in rg:ripgrep eza:eza delta:git-delta starship:starship tree-sitter:tree-sitter-cli; do
     command -v "${pair%%:*}" &>/dev/null || missing+=("${pair#*:}")
   done
   command -v bat &>/dev/null || command -v batcat &>/dev/null || missing+=("bat")
+  # Debian/Ubuntu ship fd as fdfind
+  command -v fd &>/dev/null || command -v fdfind &>/dev/null || missing+=("fd-find")
 }
 
 pm=""
@@ -74,4 +94,17 @@ if (( ${#missing[@]} )) && [[ -t 0 ]] && [[ -n "$pm" ]] && command -v sudo &>/de
 fi
 if (( ${#missing[@]} )); then
   echo "optional tools not installed: ${missing[*]}"
+fi
+
+# kickstart.nvim needs Neovim 0.12+, and distro packages are often older.
+NVIM_HELP="see ~/.config/nvim/README.md (Install Recipes) for ways to get a recent version"
+if ! command -v nvim &>/dev/null; then
+  echo "neovim not installed: $NVIM_HELP"
+else
+  nvim_ver="$(nvim --version)"
+  nvim_ver="${nvim_ver%%$'\n'*}"
+  nvim_ver="${nvim_ver#NVIM v}"
+  if [[ "$(printf '%s\n' 0.12 "$nvim_ver" | sort -V | head -n1)" != 0.12 ]]; then
+    echo "neovim $nvim_ver is older than 0.12: $NVIM_HELP"
+  fi
 fi

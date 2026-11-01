@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Safe to re-run: every step skips what's already done.
-# Backups (*.bak) keep only the most recent copy; a re-run overwrites the previous one.
+# Backups (*.bak) keep only the most recent copy;
+# a re-run overwrites the previous one.
 
 set -Eeuo pipefail
 
@@ -47,13 +48,24 @@ link "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 link "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link "$DOTFILES/gitconfig" "$HOME/.gitconfig"
 link "$DOTFILES/vimrc" "$HOME/.vimrc"
-link "$DOTFILES/shellrc" "$HOME/.zshrc"
+link "$DOTFILES/nvim" "$HOME/.config/nvim"
+link "$DOTFILES/zshrc" "$HOME/.zshrc"
 
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.zshrc.local" ]] || touch "$HOME/.zshrc.local"
 
+# iTerm2: load settings from dotfiles and save changes back automatically.
+ITERM=com.googlecode.iterm2
+defaults write "$ITERM" PrefsCustomFolder -string "$DOTFILES/iterm2"
+defaults write "$ITERM" LoadPrefsFromCustomFolder -bool true
+defaults write "$ITERM" NoSyncNeverRemindPrefsChangesLostForFile -bool true
+# 0 = on quit, 1 = never, 2 = automatically
+defaults write "$ITERM" \
+  NoSyncNeverRemindPrefsChangesLostForFile_selection -int 2
+
 # 3. Apps: install whatever's missing, upgrade whatever's outdated.
 if ! brew bundle --file="$DOTFILES/Brewfile"; then
-  echo "warning: one or more apps in Brewfile failed (see above) — everything else still succeeded" >&2
+  echo "warning: one or more apps in Brewfile failed (see above)." >&2
+  echo "Everything else still succeeded." >&2
   exit 1
 fi
