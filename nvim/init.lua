@@ -164,6 +164,18 @@ do
   -- Show which line your cursor is on
   vim.o.cursorline = true
 
+  -- Auto-wrap width; C/C++ matches clang-format's 80 columns
+  vim.o.textwidth = 88
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'c', 'cpp' },
+    callback = function() vim.bo.textwidth = 80 end,
+  })
+  -- Python: wrap only comments while typing; ruff formats code on save
+  vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'python',
+    callback = function() vim.opt_local.formatoptions:remove 't' end,
+  })
+
   -- Minimal number of screen lines to keep above and below the cursor.
   vim.o.scrolloff = 10
 
@@ -233,6 +245,11 @@ do
   vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
   vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
   vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+  vim.keymap.set('n', '<C-Left>', '<Cmd>vertical resize -2<CR>', { desc = 'Make window narrower' })
+  vim.keymap.set('n', '<C-Right>', '<Cmd>vertical resize +2<CR>', { desc = 'Make window wider' })
+  vim.keymap.set('n', '<C-Up>', '<Cmd>resize +2<CR>', { desc = 'Make window taller' })
+  vim.keymap.set('n', '<C-Down>', '<Cmd>resize -2<CR>', { desc = 'Make window shorter' })
 
   -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
   -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
