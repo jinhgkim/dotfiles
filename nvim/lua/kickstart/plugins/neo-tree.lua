@@ -13,6 +13,9 @@ require('neo-tree').setup {
   filesystem = {
     -- refresh the tree when files change outside Neovim (e.g. Claude Code edits)
     use_libuv_file_watcher = true,
+    filtered_items = {
+      visible = true,
+    },
     window = {
       mappings = {
         ['\\'] = 'close_window',
