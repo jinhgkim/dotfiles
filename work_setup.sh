@@ -61,6 +61,13 @@ git config --global --get-all include.path 2>/dev/null | grep -Fqx "$INCLUDE_PAT
 # Secrets file: created once, never touched again if it already exists.
 [[ -e "$HOME/.bashrc.local" ]] || touch "$HOME/.bashrc.local"
 
+# Nerd Font for nvim icons
+FONT_DIR="$HOME/.local/share/fonts"
+for font in "$DOTFILES"/fonts/*.ttf; do
+  copy "$font" "$FONT_DIR/${font##*/}"
+done
+command -v fc-cache &>/dev/null && fc-cache -f "$FONT_DIR"
+
 # Optional CLI tools: bashrc falls back to plain ls/cat/pager without them.
 # nvim (kickstart) needs rg, fd and tree-sitter.
 find_missing() {

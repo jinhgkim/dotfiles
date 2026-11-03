@@ -20,20 +20,20 @@ fi
 # work machines keep personal settings in *.personal copies
 _rc=~/.bashrc
 [[ -f $_rc.personal ]] && _rc=$_rc.personal
-alias bashv="vim $_rc"
+alias bashv="nvim $_rc"
 alias bashc="cat $_rc"
 
 _gitcfg=~/.gitconfig
 [[ -f $_gitcfg.personal ]] && _gitcfg=$_gitcfg.personal
-alias gitv="vim $_gitcfg"
+alias gitv="nvim $_gitcfg"
 alias gitc="cat $_gitcfg"
 
 alias reload='source ~/.bashrc'
 alias proj='cd $HOME/projects'
 
 ############## exports ##############
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 
 # dedupe history, share it live across terminals
 export HISTCONTROL=ignoredups
