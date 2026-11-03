@@ -17,6 +17,8 @@ elif command -v batcat &>/dev/null; then
   alias cat='batcat --paging=never'
 fi
 
+command -v nvim &>/dev/null && alias vim='nvim' vi='nvim'
+
 # work machines keep personal settings in *.personal copies
 _rc=~/.bashrc
 [[ -f $_rc.personal ]] && _rc=$_rc.personal

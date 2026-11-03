@@ -11,6 +11,7 @@ else
 fi
 
 command -v bat &>/dev/null && alias cat='bat --paging=never'
+command -v nvim &>/dev/null && alias vim='nvim' vi='nvim'
 
 alias bashv='nvim ~/.zshrc'
 alias bashc='cat ~/.zshrc'
