@@ -41,6 +41,8 @@ copy "$DOTFILES/AGENTS.md" "$HOME/.claude/CLAUDE.md"
 copy "$DOTFILES/AGENTS.md" "$HOME/.codex/AGENTS.md"
 copy "$DOTFILES/vimrc" "$HOME/.vimrc"
 copy_dir "$DOTFILES/nvim" "$HOME/.config/nvim"
+# "config", not "config.ghostty": pre-1.2.3 Ghostty reads only "config".
+copy "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
 copy "$DOTFILES/bashrc" "$HOME/.bashrc.personal"
 
 # Load personal bashrc from the end of ~/.bashrc, keeping any work-provided config.
@@ -70,9 +72,10 @@ command -v fc-cache &>/dev/null && fc-cache -f "$FONT_DIR"
 
 # Optional CLI tools: bashrc falls back to plain ls/cat/pager without them.
 # nvim (kickstart) needs rg, fd and tree-sitter.
+# ghostty: official repos on Ubuntu 26.04+ only.
 find_missing() {
   missing=()
-  for pair in rg:ripgrep eza:eza delta:git-delta starship:starship tree-sitter:tree-sitter-cli; do
+  for pair in rg:ripgrep eza:eza delta:git-delta starship:starship tree-sitter:tree-sitter-cli ghostty:ghostty; do
     command -v "${pair%%:*}" &>/dev/null || missing+=("${pair#*:}")
   done
   command -v bat &>/dev/null || command -v batcat &>/dev/null || missing+=("bat")
